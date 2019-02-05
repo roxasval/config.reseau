@@ -1,0 +1,138 @@
+
+!
+! No configuration change since last restart
+version 15.1
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname RT1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$fAKo$B7G3EfxFyGz9WUMHxFOoH.
+enable password pass
+!
+no aaa new-model
+!
+!
+no ipv6 cef
+ip source-route
+ip cef
+!
+!
+!
+!
+!
+ip domain name inov.com
+!
+multilink bundle-name authenticated
+!
+!
+crypto pki token default removal timeout 0
+!
+!
+license udi pid CISCO2921/K9 sn FCZ15382049
+hw-module usb disable
+!
+!
+username benjamin secret 4 ZwZCjZpqSXIvRzD.nWp0Zo5muAaIQwD/IC9ucx3AbOM
+username val secret 4 Zxz4LrEcDq14/fqXxpdeOykzkSIHi9E5ZvLgi4m0Hi6
+username max secret 4 auwuE12jCMGTFhfF/.wj.twQzu2XX25dqqRH3QyhCPM
+!
+redundancy
+!
+!
+!
+!
+ip ssh time-out 60
+ip ssh logging events
+ip ssh version 2
+!
+track 10 interface GigabitEthernet0/0 line-protocol
+! 
+!
+!
+!
+!
+!
+!
+interface Embedded-Service-Engine0/0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/0
+ ip address 10.63.11.26 255.255.255.0
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ ip address 10.1.200.5 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly in
+ standby 10 ip 10.1.200.1
+ standby 10 priority 105
+ standby 10 preempt
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+ no ip address
+ duplex auto
+ speed auto
+ no mop enabled
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+ip nat inside source list 1 interface GigabitEthernet0/0 overload
+ip nat inside source list 10 interface GigabitEthernet0/0 overload
+ip nat inside source list 20 interface GigabitEthernet0/0 overload
+ip nat inside source list 90 interface GigabitEthernet0/0 overload
+ip route 0.0.0.0 0.0.0.0 10.63.11.253
+ip route 10.1.10.0 255.255.255.0 10.1.200.2
+ip route 10.1.20.0 255.255.255.0 10.1.200.2
+ip route 10.1.90.0 255.255.255.0 10.1.200.2
+!
+access-list 1 permit 10.1.200.0 0.0.0.255
+access-list 10 permit 10.1.10.0 0.0.0.255
+access-list 20 permit 10.1.20.0 0.0.0.255
+access-list 90 permit 10.1.90.0 0.0.0.255
+!
+!
+!
+!
+!
+control-plane host
+!
+!
+control-plane
+!
+!
+!
+line con 0
+line aux 0
+line 2
+ no activation-character
+ no exec
+ transport preferred none
+ transport input all
+ transport output pad telnet rlogin lapb-ta mop udptn v120 ssh
+ stopbits 1
+line vty 0 2
+ password pass
+ login local
+ transport input ssh
+line vty 3 4
+ password pass
+ login
+ transport input all
+!
+scheduler allocate 20000 1000
+end
